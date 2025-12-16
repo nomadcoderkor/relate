@@ -5,6 +5,7 @@
  * OCR.space는 무료 티어를 제공하며 API 키만으로 간단히 사용 가능합니다.
  */
 
+import sharp from "sharp";
 import type { OcrResult } from "@/types/ocr";
 
 /**
@@ -46,8 +47,47 @@ export async function callGoogleVisionOcr(
       throw new Error("OCR_SPACE_API_KEY is not configured");
     }
 
+    // 이미지 리사이징 (OCR.space 1MB 제한 대응)
+    // Base64 인코딩은 원본의 약 133% 크기가 되므로
+    // 안전하게 500KB 이하로 압축합니다
+    let processedBuffer = imageBuffer;
+    
+    // 이미지 메타데이터 확인
+    const metadata = await sharp(imageBuffer).metadata();
+    const originalSize = imageBuffer.length;
+    
+    console.log("Original image info:", {
+      width: metadata.width,
+      height: metadata.height,
+      format: metadata.format,
+      size: originalSize,
+      sizeKB: Math.round(originalSize / 1024),
+    });
+
+    // 500KB(512000 bytes) 이상이면 리사이징
+    if (originalSize > 512000) {
+      console.log("Image too large, resizing...");
+      
+      // 명함 인식에 적합한 크기로 리사이징 (최대 1600px)
+      // JPEG 품질 85%로 압축
+      processedBuffer = await sharp(imageBuffer)
+        .resize(1600, 1600, {
+          fit: "inside",
+          withoutEnlargement: true,
+        })
+        .jpeg({ quality: 85 })
+        .toBuffer();
+
+      const newSize = processedBuffer.length;
+      console.log("Resized image info:", {
+        originalSizeKB: Math.round(originalSize / 1024),
+        newSizeKB: Math.round(newSize / 1024),
+        reduction: Math.round((1 - newSize / originalSize) * 100) + "%",
+      });
+    }
+
     // Base64 인코딩
-    const base64Image = imageBuffer.toString("base64");
+    const base64Image = processedBuffer.toString("base64");
 
     // MIME 타입을 파일 확장자로 변환
     const getFileExtension = (mime: string): string => {
