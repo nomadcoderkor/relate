@@ -77,6 +77,6 @@
     "app/api/**": {
       "maxDuration": 10
     }
-  },
+  }
 }
 
