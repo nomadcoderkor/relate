@@ -203,6 +203,7 @@ npm run generate:icons   # PWA 아이콘 생성
 
 ### 배포
 - 📕 [Vercel 배포 가이드](./docs/DEPLOYMENT.md)
+- 📕 [이메일 인증 리다이렉트 문제 해결](./docs/EMAIL_AUTH_REDIRECT_FIX.md)
 
 ## 🌐 Vercel 배포
 
