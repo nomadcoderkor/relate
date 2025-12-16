@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="152" height="152" viewBox="0 0 152 152" xmlns="http://www.w3.org/2000/svg">
+  <!-- 배경 -->
+  <rect width="152" height="152" fill="#4F46E5" rx="30.400000000000002"/>
+  
+  <!-- 명함 아이콘 -->
+  <g transform="translate(30.400000000000002, 38)">
+    <rect x="0" y="0" width="91.2" height="60.800000000000004" fill="white" rx="4.56"/>
+    <rect x="7.6000000000000005" y="7.6000000000000005" width="30.400000000000002" height="12.16" fill="#4F46E5" rx="1.52"/>
+    <rect x="7.6000000000000005" y="22.8" width="53.199999999999996" height="4.56" fill="#E5E7EB" rx="0.76"/>
+    <rect x="7.6000000000000005" y="30.400000000000002" width="38" height="4.56" fill="#E5E7EB" rx="0.76"/>
+  </g>
+  
+  <!-- 텍스트 -->
+  <text x="76" y="124.63999999999999" 
+        font-family="Arial, sans-serif" 
+        font-size="18.24" 
+        font-weight="bold" 
+        fill="white" 
+        text-anchor="middle">명함</text>
+</svg>

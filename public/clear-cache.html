@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>캐시 클리어 - 명함 관리 앱</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    h1 { color: #4F46E5; }
+    button {
+      background: #4F46E5;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 10px 5px;
+    }
+    button:hover { background: #4338CA; }
+    .success { color: #10B981; font-weight: bold; }
+    .info { background: #EEF2FF; padding: 15px; border-radius: 6px; margin: 15px 0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🧹 캐시 및 Service Worker 클리어</h1>
+    
+    <div class="info">
+      <strong>이 페이지는 다음을 수행합니다:</strong>
+      <ul>
+        <li>Service Worker 등록 해제</li>
+        <li>브라우저 캐시 삭제</li>
+        <li>IndexedDB 삭제</li>
+      </ul>
+    </div>
+
+    <button onclick="clearAll()">전체 캐시 클리어</button>
+    <button onclick="window.location.href='/'">홈으로 돌아가기</button>
+    
+    <div id="result" style="margin-top: 20px;"></div>
+  </div>
+
+  <script>
+    async function clearAll() {
+      const result = document.getElementById('result');
+      result.innerHTML = '<p>클리어 중...</p>';
+      
+      try {
+        // Service Worker 등록 해제
+        if ('serviceWorker' in navigator) {
+          const registrations = await navigator.serviceWorker.getRegistrations();
+          for (let registration of registrations) {
+            await registration.unregister();
+          }
+          result.innerHTML += '<p class="success">✓ Service Worker 제거됨</p>';
+        }
+        
+        // 캐시 삭제
+        if ('caches' in window) {
+          const cacheNames = await caches.keys();
+          await Promise.all(cacheNames.map(name => caches.delete(name)));
+          result.innerHTML += '<p class="success">✓ 캐시 삭제됨</p>';
+        }
+        
+        // IndexedDB 삭제
+        if ('indexedDB' in window) {
+          const dbs = await indexedDB.databases();
+          dbs.forEach(db => indexedDB.deleteDatabase(db.name));
+          result.innerHTML += '<p class="success">✓ IndexedDB 삭제됨</p>';
+        }
+        
+        result.innerHTML += '<p class="success" style="font-size: 18px; margin-top: 20px;">✓ 모든 캐시가 클리어되었습니다!</p>';
+        result.innerHTML += '<p>페이지를 새로고침하거나 홈으로 돌아가세요.</p>';
+        
+        // 3초 후 자동으로 홈으로 이동
+        setTimeout(() => {
+          window.location.href = '/';
+        }, 3000);
+        
+      } catch (error) {
+        result.innerHTML += '<p style="color: red;">오류: ' + error.message + '</p>';
+      }
+    }
+  </script>
+</body>
+</html>
